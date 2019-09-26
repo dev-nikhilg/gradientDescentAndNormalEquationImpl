@@ -16,7 +16,6 @@ class GradientDescent(MinimiseFunction):
             Y (n*1 vector) representing the observed output value of our observations
             
         """
-        self.theta_vector = None
         MinimiseFunction.__init__(self, X, Y)
     
     
@@ -70,20 +69,6 @@ class GradientDescent(MinimiseFunction):
             
         """
         return np.zeros((self.num_features + 1, 1))
-            
-            
-    def calculate_hypothesis_output(self):
-        """ Method to calculate the output vector of our current hypothesis 
-            which is represented by the theta_vector
-            
-        Args:
-            None
-            
-        Returns:
-            h(theta_vector) : vector of predicted values for observed feature matrix X
-            
-        """
-        return np.matmul(self.X, self.theta_vector)
                 
         
     def calculate_hypothesis_cost(self, hypothesis_output_vector):
