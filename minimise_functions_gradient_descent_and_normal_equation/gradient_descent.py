@@ -1,92 +1,23 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-class GradientDescent:
+from .minimise_function import MinimiseFunction
+
+class GradientDescent(MinimiseFunction):
     
-    def __init__(self, builder):
+    def __init__(self, X = None, Y = None):
         """Gradient descent class to minimise a generic function 
         
         Attributes:
-            builder : an instance of the builder class
+            X (n*m feature matrix) representing the feature matrix of the observations. 
+                n is the number of observations
+                m is the number of features in an observation 
+                X should be provided without the extra column of 1s 
+            Y (n*1 vector) representing the observed output value of our observations
             
         """
-        
-        if builder.X:
-            self.X = builder.X
-            self.num_examples = self.X.shape[0]
-            self.num_features = self.X.shape[1] - 1
-        else:
-            self.num_examples = 100
-            self.num_features = 1
-            self.X = self.default_single_feature_X()
-            
-            
-        if builder.Y:
-            self.Y = builder.Y
-        else:
-            self.Y = self.default_linear_related_Y()
-     
-        
         self.theta_vector = None
-        
-        
-    def default_single_feature_X(self):
-        """ Method to create some some sample values of X
-            we add an additional first column of 1s as needed in the gradient descent
-            
-        Args: 
-            None
-        
-        Returns:
-            return a 100*2 matrix with first column made of all 1s 
-            and second column represents random observed values of the only feature involved
-            
-        """
-        
-        X = 2 * np.random.rand(self.num_examples, self.num_features)
-        ones = np.ones((self.num_examples, 1))
-        return np.concatenate((ones, X), axis=1)
-    
-    
-    
-    def default_linear_related_Y(self):
-        """ Method to generate some linearly related values to the observed feature matrix X
-        
-        Args:
-            None
-            
-        Returns:
-            Returns a vector with randomised values linearly related to X. 
-            Number of vales/rows in vector Y is equal to the number of observations (number of rows) in feature matrix X
-            
-        """
-        
-        Y = np.random.randn(self.num_examples, 1)
-
-        for i in range(self.num_features + 1):
-            rand = np.random.randint(1,10)
-            col = self.X[:,i].reshape(self.num_examples, 1)
-            Y = np.add(Y, col * rand)
-        
-        #Plot the curve
-        plt.plot(self.X[:, 1], Y, 'ro')
-        plt.show()
-        
-        return Y
-    
-    
-    def default_theta_vector(self):
-        """ Method the generate initial values of theta parameter vector
-        
-        Args:
-            None
-            
-        Return:
-            Return a vector with all values initialised to 0
-            
-        """
-        
-        return np.zeros((self.num_features + 1, 1))
+        MinimiseFunction.__init__(self, X, Y)
     
     
     def minimise(self, theta_vector = None, alpha = 0.5, threshold = 0.05):
@@ -99,7 +30,6 @@ class GradientDescent:
             theta_vector : theta_value vector corresponding to our best hypothesis
             
         """
-        
         if theta_vector:
             self.theta_vector = theta_vector
         else:
@@ -126,6 +56,20 @@ class GradientDescent:
         plt.plot(self.X[:, 1], hypothesis_output_vector)
         plt.show()
             
+        return self.theta_vector
+    
+    
+    def default_theta_vector(self):
+        """ Method the generate initial values of theta parameter vector
+        
+        Args:
+            None
+            
+        Return:
+            Return a vector with all values initialised to 0
+            
+        """
+        return np.zeros((self.num_features + 1, 1))
             
             
     def calculate_hypothesis_output(self):
@@ -139,7 +83,6 @@ class GradientDescent:
             h(theta_vector) : vector of predicted values for observed feature matrix X
             
         """
-        
         return np.matmul(self.X, self.theta_vector)
                 
         
@@ -154,7 +97,6 @@ class GradientDescent:
             float : cost of current hypothesis as compared to Y
             
         """
-        
         cost = float(0)
 
         for index in range(self.num_examples):
@@ -174,7 +116,6 @@ class GradientDescent:
             theta_vector : vector containing new values of theta
             
         """
-        
         new_theta_vector = self.theta_vector
         
         for index in range(self.num_features + 1):
@@ -184,69 +125,4 @@ class GradientDescent:
             
             new_theta_vector[index][0] = new_theta_vector[index][0] - derivative_term
         
-        
         return new_theta_vector
-        
-        
-        
-    class Builder:
-        
-        def __init__(self):
-            """ Builder class for the GradientDescent class. Initialises all variables with null
-            
-            Attributes: None
-        
-            """
-            self.X = None
-            self.Y = None
-            self.theta_vector = None 
-        
-        
-        def setX(self, X):
-            """ Builder method to set the value of feature matrix X
-            
-            Args:
-                X : feature matrix X
-                
-            Returns:
-                self : self Builder instance
-                
-            """
-            
-            self.X = X
-            return self
-        
-        
-        def setY(self, Y):
-            """ Builder method to set the value of observed output values vector Y
-            
-            Args:
-                Y : observed output values vector Y
-                
-            Returns:
-                self : self Builder instance
-                
-            """
-            
-            self.Y = Y
-            return self
-        
-        
-        def build(self):
-            """ Builder method used to create the instance of GradientDescent
-            
-            Args:
-                None
-                
-            Returns:
-                GradientDescent : a new instance of GradientDescent
-                
-            """
-            
-            return GradientDescent(self)
-                     
-      
-builder = GradientDescent.Builder()
-
-a = builder.build()
-a.minimise()
