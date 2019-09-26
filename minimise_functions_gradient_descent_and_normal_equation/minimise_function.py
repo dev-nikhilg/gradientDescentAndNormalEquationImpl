@@ -29,6 +29,8 @@ class MinimiseFunction:
         else:
             self.Y = self.default_linear_related_Y()
             
+        self.theta_vector = None
+            
             
             
     def default_single_feature_X(self):
@@ -71,3 +73,18 @@ class MinimiseFunction:
         plt.show()
         
         return Y
+    
+    
+    def calculate_hypothesis_output(self):
+        """ Method to calculate the output vector of our current hypothesis 
+            which is represented by the theta_vector
+            
+        Args:
+            None
+            
+        Returns:
+            h(theta_vector) : vector of predicted values for observed feature matrix X
+            
+        """
+        return np.matmul(self.X, self.theta_vector)
+    
